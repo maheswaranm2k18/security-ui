@@ -1,3 +1,5 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <div class="container">
     <div class="row mb-2 mt-2 text-center">
         <div class="col-md-4">
@@ -15,6 +17,10 @@
         <!-- User table -->
         <mat-tab-group>
             <mat-tab label="Users">
+                <ng-template mat-tab-label>
+                    <i class="fa fa-users example-tab-icon"></i>
+                    Users
+                  </ng-template>
                 <div class="tab-pane fade show active" id="users">
                     <div class="mb-3 float-right">
                         <div class="btn-group mr-2">
@@ -81,7 +87,11 @@
             </mat-tab>
 
             <!-- change password -->
-            <mat-tab *ngIf="isAdmin" label="Settings">
+            <mat-tab *ngIf="isAdmin">
+                <ng-template mat-tab-label>
+                    <i class="fa fa-cogs example-tab-icon"></i>
+                    Settings
+                  </ng-template>
                 <div class="tab-pane fade show" id="reset-password">
                     <form #resetPasswordForm="ngForm" (ngSubmit)="onResetPassword(resetPasswordForm)">
                         <fieldset>
@@ -104,7 +114,11 @@
             </mat-tab>
 
             <!-- user profile -->
-            <mat-tab label="Welcome, {{user?.firstName}}">
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="fa fa-user example-tab-icon"></i>
+                    Welcome, {{user?.firstName}}
+                  </ng-template>
                 <div class="tab-pane fade show" id="profile">
                     <div class="container">
                         <div class="row flex-lg-nowrap">
