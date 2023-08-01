@@ -32,20 +32,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.authenticationService.register(user).subscribe(
         (response: User) => {
-          // const token = response.headers.get('Jwt-Token');
-          // if(token != null) {
-          //   this.authenticationService.saveToken(token);
-          // }
-          // this.authenticationService.adduserToLocalCache(response.body);
-            console.log(response);
             this.showLoading = false;
             this.sendNotification(NotificationType.SUCCESS, 'A new account was created for' + 
             response.firstName + 'Please check your email for password to log in.');
         },
         (errorResponse: HttpErrorResponse) => {
           // Handle error, if needed
-          console.log(errorResponse);
-          console.error('An error occurred during login:', errorResponse.error.message);
           this.sendNotification(NotificationType.ERROR, errorResponse.error.message);
           this.showLoading = false;
         }

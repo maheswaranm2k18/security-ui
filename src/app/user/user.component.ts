@@ -5,7 +5,6 @@ import { UserService } from '../service/user.service';
 import { HttpErrorResponse, HttpEvent, HttpEventType } from '@angular/common/http';
 import { NotificationService } from '../service/notification.service';
 import { NotificationType } from '../enum/notification-type.enum';
-import { ModalDirective } from 'ngx-bootstrap/modal';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
@@ -36,48 +35,18 @@ export class UserComponent implements OnInit {
   public fileStatus = new FileUploadStatus();
 
   constructor(private userService: UserService, private notificationService: NotificationService,
-    private renderer: Renderer2, public dialog: MatDialog, private modalService: NgbModal,
+    public dialog: MatDialog, private modalService: NgbModal,
     private authenticationService: AuthenticationService, private router: Router) { }
-
-  // @ViewChild('openUserInfoButton') openUserInfoButtonRef!: ElementRef;
-
-  // Call this function to open the user info modal programmatically
-  // openUserInfoModal() {
-  //   const openUserInfoButton = this.openUserInfoButtonRef.nativeElement;
-  //   this.renderer.setAttribute(openUserInfoButton, 'data-toggle', 'modal');
-  //   this.renderer.setAttribute(openUserInfoButton, 'data-target', '#viewUserModel');
-  //   openUserInfoButton.click();
-  // }
-
-  // @ViewChild('openUserInfoButton') openUserInfoButton!: ModalDirective;
 
   closeResult: string = '';
 
-  
-  
   ngOnInit(): void {
-    if(this.authenticationService.getUserFromLocalCache() != undefined) {
+    if (this.authenticationService.getUserFromLocalCache() != undefined) {
       this.user = this.authenticationService.getUserFromLocalCache();
     } else {
       this.user = null;
     }
-    
     this.getUsers(true);
-  }
-
-  showUserTable = true;
-  showChangePassword = false;
-  selectedIndex = 0;
-
-  toggleContent(index: number) {
-    // if (content === 'users') {
-    //   this.showUserTable = true;
-    //   this.showChangePassword = false;
-    // } else if (content === 'reset-password') {
-    //   this.showUserTable = false;
-    //   this.showChangePassword = true;
-    // }
-    this.selectedIndex = index;
   }
 
   public changeTitle(title: string): void {
@@ -89,11 +58,11 @@ export class UserComponent implements OnInit {
     this.subscriptions.push(
       this.userService.getUsers().subscribe(
         (response: User[] | HttpErrorResponse) => {
-          if(!(response instanceof HttpErrorResponse)) {
+          if (!(response instanceof HttpErrorResponse)) {
             this.userService.addUsersToLocalCache(response);
             this.users = response;
             this.refreshing = false;
-            if(showNotification) {
+            if (showNotification) {
               this.sendNotification(NotificationType.SUCCESS, response.length + 'user(s) loaded successfully...');
             }
           }
@@ -109,35 +78,21 @@ export class UserComponent implements OnInit {
   public onSelectUser(selectedUser: User): void {
     this.selectedUser = selectedUser;
     document.getElementById('openUserInfo')?.click();
-    // document.getElementById('mymodal')?.click();
-    // this.open(selectedUser);
   }
-
-  // onSelectUser(user: any) {
-    // this.selectedUser = user;
-    // this.openUserInfoDialog(user);
-  // }
-
-  // openUserInfoDialog(user: any) {
-  //   this.dialog.open(UserInfoDialogComponent, {
-  //     data: user,
-  //     disableClose: true,
-  //   });
-  // }
 
   /**
    * Write code on Method
    *
    * @return response()
    */
-  open(content:any) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+  open(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
-  } 
-    
+  }
+
   /**
    * Write code on Method
    *
@@ -149,7 +104,7 @@ export class UserComponent implements OnInit {
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
       return 'by clicking on a backdrop';
     } else {
-      return  `with: ${reason}`;
+      return `with: ${reason}`;
     }
   }
 
@@ -185,7 +140,7 @@ export class UserComponent implements OnInit {
           delete this.profileImage;
         }
       )
-      );
+    );
   }
 
   public onUpdateUser(): void {
@@ -210,13 +165,10 @@ export class UserComponent implements OnInit {
   public onUpdateCurrentUser(user: User): void {
     this.refreshing = true;
     const userDetails = this.authenticationService.getUserFromLocalCache();
-this.currentusername = userDetails ? userDetails.username : '';
-if(userDetails !== null) {
-  this.editUser = user;
-  // this.profileImage = userDetails.profileImageUrl;
-}
-
-
+    this.currentusername = userDetails ? userDetails.username : '';
+    if (userDetails !== null) {
+      this.editUser = user;
+    }
     const formData = this.userService.createUserFromDate(this.currentusername, this.editUser, this.profileImage);
     this.subscriptions.push(
       this.userService.updateUser(formData).subscribe(
@@ -237,15 +189,15 @@ if(userDetails !== null) {
 
   public onUpdateProfileImage(): void {
     const formData = new FormData();
-    const name = 
-    formData.append('username', this.user?.username ? this.user?.username :'');
+    const name =
+      formData.append('username', this.user?.username ? this.user?.username : '');
     formData.append('profileImage', this.profileImage);
     this.subscriptions.push(
       this.userService.updateProfileImage(formData).subscribe(
         (event: HttpErrorResponse | HttpEvent<any>) => {
           console.log(event);
-          if(!(event instanceof HttpErrorResponse))
-          this.reportUploadProgress(event);
+          if (!(event instanceof HttpErrorResponse))
+            this.reportUploadProgress(event);
           // this.sendNotification(NotificationType.SUCCESS, 'Profile image updated successfully!...');
         },
         (errorResponse: HttpErrorResponse) => {
@@ -271,8 +223,8 @@ if(userDetails !== null) {
 
       case HttpEventType.Response:
         if (event.status === 200) {
-          if(this.user !== null)
-          this.user.profileImageUrl = `${event.body.profileImageUrl}?time=${new Date().getTime()}`;
+          if (this.user !== null)
+            this.user.profileImageUrl = `${event.body.profileImageUrl}?time=${new Date().getTime()}`;
           let message = event.body.firstName + '\s profile image updated successfully';
           this.sendNotification(NotificationType.SUCCESS, message);
           this.fileStatus.status = 'done';
@@ -296,28 +248,11 @@ if(userDetails !== null) {
     this.sendNotification(NotificationType.SUCCESS, 'You have been successfully logged out');
   }
 
-  // public onDeleteUser(userId: number): void {
-  //   this.subscriptions.push(
-  //     this.userService.deleteUser(userId).subscribe(
-  //       (response: CustomHttpResponse | HttpErrorResponse) => {
-  //         if(!(response instanceof HttpErrorResponse)) {
-  //           this.sendNotification(NotificationType.SUCCESS, response.message);
-  //           this.getUsers(false);
-  //         }
-  //       },
-  //       (errorResponse: HttpErrorResponse) => {
-  //         this.sendNotification(NotificationType.WARNING, errorResponse.error.message);
-  //         delete this.profileImage;
-  //       }
-  //     )
-  //   )
-  // }
-
   public onDeleteUser(username: string): void {
     this.subscriptions.push(
       this.userService.deleteUser(username).subscribe(
         (response: CustomHttpResponse | HttpErrorResponse) => {
-          if(!(response instanceof HttpErrorResponse)) {
+          if (!(response instanceof HttpErrorResponse)) {
             this.sendNotification(NotificationType.SUCCESS, response.message);
             this.getUsers(false);
           }
@@ -348,19 +283,15 @@ if(userDetails !== null) {
     );
   }
 
-  // public onProfileImageChange(fileName: string, file: File): void {
-  //   console.log(fileName, file);
-  // }
-
   public searchUsers(searchTerm: string): void {
     console.log(searchTerm);
     const results: User[] = [];
     for (const user of this.userService.getUsersFromLocalCache()) {
-      if (user.firstName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 || 
-          user.lastName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 || 
-          user.username.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
-          user.userId.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-            results.push(user);
+      if (user.firstName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.lastName.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.username.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+        user.userId.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+        results.push(user);
       }
     }
     this.users = results;
@@ -397,7 +328,7 @@ if(userDetails !== null) {
   }
 
   private getUserRole(): string {
-    const userRole =  this.authenticationService.getUserFromLocalCache()?.role;
+    const userRole = this.authenticationService.getUserFromLocalCache()?.role;
     if (userRole !== undefined) {
       return userRole;
     } else {

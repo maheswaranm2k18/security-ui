@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpEvent, HttpResponse } from '@angular/common/http';
-import { environment } from '../../environments/environment'
+import { HttpClient, HttpErrorResponse, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../model/User';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { CustomHttpResponse } from '../model/custom-http-response';
 
 @Injectable({
@@ -11,7 +9,6 @@ import { CustomHttpResponse } from '../model/custom-http-response';
 })
 export class UserService {
   private host: string = 'http://localhost:8080';
-  // environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -19,17 +16,9 @@ export class UserService {
     return this.http.get<User[]>(this.host+'/user/list');
   }
 
-  // public addUser(formData: FormData): Observable<User | HttpErrorResponse> {
-  //   return this.http.post<User>('${this.host}/user/add', formData);
-  // }
-
   public addUser(formData: FormData): Observable<User> {
     return this.http.post<User>(this.host+'/user/add', formData);
   }
-
-  // public updateUser(formData: FormData): Observable<User | HttpErrorResponse> {
-  //   return this.http.post<User>('${this.host}/user/update', formData);
-  // }
 
   public updateUser(formData: FormData): Observable<User> {
     return this.http.post<User>(this.host+'/user/update', formData);
@@ -46,10 +35,6 @@ export class UserService {
       observe: 'events'
     });
   }
-
-  // public deleteUser(userId: number): Observable<CustomHttpResponse | HttpErrorResponse> {
-  //   return this.http.delete<CustomHttpResponse>(this.host+'/user/delete/'+userId);
-  // }
 
   public deleteUser(username: string): Observable<CustomHttpResponse | HttpErrorResponse> {
     return this.http.delete<CustomHttpResponse>(this.host+'/user/delete/'+username);
